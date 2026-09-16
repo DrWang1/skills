@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>__TITLE__</title>
+<style>
+:root{
+  --bg:#eef0f6; --card:#ffffff; --card2:#f7f8fc;
+  --ink:#171e2b; --sub:#5d6a7d; --mute:#8b95a5;
+  --line:#e3e7ef; --line2:#eef1f6;
+  --accent:#3a6df0; --accent2:#6b8ef7;
+  --up:#d8493f; --down:#21a675; --warn:#e8893b;
+  --navy1:#1b2a4e; --navy2:#2c4278;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  background:var(--bg); color:var(--ink); line-height:1.7;
+  -webkit-font-smoothing:antialiased; padding:0 0 64px;
+}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+
+/* ---------- Header ---------- */
+.hero{
+  background:linear-gradient(135deg,var(--navy1) 0%,var(--navy2) 62%,#3a5391 100%);
+  color:#eef2fb; padding:44px 0 40px; margin-bottom:28px;
+  border-bottom:3px solid var(--accent);
+}
+.hero .wrap{padding-top:0}
+.hero h1{font-size:30px;font-weight:700;letter-spacing:.5px;line-height:1.35}
+.hero .meta{margin-top:10px;font-size:13px;color:#a9b8d6;display:flex;flex-wrap:wrap;gap:16px}
+.hero .meta b{color:#dce6fa;font-weight:600}
+.hero .verdict{
+  margin-top:22px;background:rgba(255,255,255,.08);border-left:3px solid #7fa2ff;
+  border-radius:0 10px 10px 0;padding:16px 20px;font-size:14.5px;line-height:1.85;color:#e8eefc;
+}
+.hero .verdict .k{color:#ffd98a;font-weight:700}
+.hero .verdict .bad{color:#ff9d94;font-weight:700}
+
+/* ---------- Section ---------- */
+section{margin-bottom:34px}
+h2{
+  font-size:19px;font-weight:700;color:var(--ink);
+  padding-left:13px;border-left:4px solid var(--accent);
+  margin-bottom:6px;line-height:1.4;
+}
+h2 .n{color:var(--mute);font-weight:500;font-size:14px;margin-right:6px}
+.lede{font-size:13.5px;color:var(--sub);margin:0 0 16px 17px}
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:20px 22px;box-shadow:0 1px 2px rgba(23,30,43,.04),0 8px 24px rgba(23,30,43,.04);
+}
+.card+.card{margin-top:14px}
+
+/* ---------- Verdict cards ---------- */
+.grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.vc{
+  background:var(--card);border:1px solid var(--line);border-radius:13px;padding:16px 15px;
+  position:relative;overflow:hidden;
+  box-shadow:0 1px 2px rgba(23,30,43,.04),0 8px 22px rgba(23,30,43,.045);
+}
+.vc::before{content:"";position:absolute;inset:0 0 auto 0;height:4px}
+.vc.keep::before{background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.vc.watch::before{background:linear-gradient(90deg,var(--warn),#f0b070)}
+.vc.cut::before{background:linear-gradient(90deg,var(--down),#4cc79c)}
+.vc .rank{position:absolute;top:12px;right:14px;font-size:11px;color:var(--mute);font-weight:600}
+.vc .nm{font-size:15.5px;font-weight:700;letter-spacing:.2px}
+.vc .cd{font-size:11.5px;color:var(--mute);margin-top:1px;font-variant-numeric:tabular-nums}
+.vc .score{
+  margin:11px 0 3px;font-size:31px;font-weight:800;line-height:1;
+  font-variant-numeric:tabular-nums;letter-spacing:-.5px;
+}
+.vc .score small{font-size:12px;font-weight:600;color:var(--mute);margin-left:2px}
+.vc .bar{height:5px;border-radius:3px;background:var(--line2);overflow:hidden;margin:9px 0 11px}
+.vc .bar i{display:block;height:100%;border-radius:3px}
+.vc .tag{
+  display:inline-block;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:6px;
+}
+.vc.keep .tag{background:#e8eefe;color:#2f5ad4}
+.vc.watch .tag{background:#fdf0e2;color:#c4701f}
+.vc.cut .tag{background:#e6f6ef;color:#1a8a63}
+.vc .why{font-size:12px;color:var(--sub);margin-top:9px;line-height:1.62}
+
+/* ---------- Table ---------- */
+.tblwrap{overflow-x:auto;border-radius:14px;border:1px solid var(--line);background:var(--card);
+  box-shadow:0 1px 2px rgba(23,30,43,.04),0 8px 24px rgba(23,30,43,.04)}
+table{width:100%;border-collapse:collapse;font-size:12.6px;font-variant-numeric:tabular-nums}
+th,td{padding:9px 11px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line2)}
+th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:var(--card);z-index:1}
+thead th{background:var(--card2);color:var(--sub);font-weight:600;font-size:11.8px;
+  border-bottom:1.5px solid var(--line)}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:#fafbfe}
+tbody tr:hover td:first-child{background:#fafbfe}
+td.b{font-weight:700}
+.up{color:var(--up)} .down{color:var(--down)} .mut{color:var(--mute)}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;vertical-align:1px}
+.d-keep{background:var(--accent)} .d-watch{background:var(--warn)} .d-cut{background:var(--down)}
+.subh{font-size:12px;color:var(--mute);margin-top:9px;line-height:1.7}
+
+/* ---------- Charts ---------- */
+.chart{width:100%;height:360px}
+.chart.tall{height:420px}
+.legend-note{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--sub);margin-top:10px}
+.legend-note i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+
+/* ---------- Stock detail ---------- */
+.stk{margin-bottom:16px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card);
+  box-shadow:0 1px 2px rgba(23,30,43,.04),0 8px 24px rgba(23,30,43,.04)}
+.stk-hd{display:flex;align-items:center;gap:14px;padding:14px 20px;background:var(--card2);
+  border-bottom:1px solid var(--line);flex-wrap:wrap}
+.stk-hd .nm{font-size:16.5px;font-weight:700}
+.stk-hd .cd{font-size:12px;color:var(--mute);font-variant-numeric:tabular-nums}
+.stk-hd .ind{font-size:11.5px;color:var(--sub);background:#eef1f8;border-radius:5px;padding:2px 8px}
+.stk-hd .px{margin-left:auto;font-size:13px;color:var(--sub);font-variant-numeric:tabular-nums}
+.stk-hd .px b{font-size:16px;color:var(--ink)}
+.stk-hd .vtag{font-size:12px;font-weight:700;padding:4px 11px;border-radius:7px}
+.vtag.keep{background:#e8eefe;color:#2f5ad4}
+.vtag.watch{background:#fdf0e2;color:#c4701f}
+.vtag.cut{background:#e6f6ef;color:#1a8a63}
+.stk-bd{padding:16px 20px 18px}
+.dim{display:grid;grid-template-columns:92px 1fr;gap:12px;padding:9px 0;border-bottom:1px dashed var(--line2)}
+.dim:last-of-type{border-bottom:none}
+.dim .lb{font-size:12.5px;font-weight:700;color:var(--sub);display:flex;align-items:center;gap:6px}
+.dim .lb em{font-style:normal;font-size:10.5px;color:var(--mute);font-weight:600}
+.dim .tx{font-size:13px;line-height:1.78;color:#2a3446}
+.kpi{display:inline-flex;gap:5px;align-items:baseline;background:#f3f5fa;border-radius:5px;
+  padding:1px 7px;margin:0 4px 3px 0;font-size:12px}
+.kpi b{font-variant-numeric:tabular-nums}
+.callout{margin-top:12px;padding:12px 15px;border-radius:10px;font-size:13px;line-height:1.75;
+  background:#f4f7fe;border-left:3px solid var(--accent)}
+.callout.cut{background:#f1faf6;border-left-color:var(--down)}
+.callout.watch{background:#fdf6ec;border-left-color:var(--warn)}
+.callout b{font-weight:700}
+
+/* ---------- Portfolio ---------- */
+.pf{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.pf .card{margin:0}
+.pf h3{font-size:14.5px;font-weight:700;margin-bottom:10px;color:var(--ink)}
+.pf ul{list-style:none;font-size:13px}
+.pf li{padding:7px 0 7px 15px;position:relative;border-bottom:1px dashed var(--line2);line-height:1.72}
+.pf li:last-child{border-bottom:none}
+.pf li:before{content:"";position:absolute;left:0;top:15px;width:5px;height:5px;border-radius:50%;background:var(--accent2)}
+.pf li b{font-weight:700}
+.pf li.risk:before{background:var(--down)}
+.pf li.warn:before{background:var(--warn)}
+
+/* ---------- Priority ---------- */
+.step{display:grid;grid-template-columns:44px 1fr;gap:15px;padding:15px 0;border-bottom:1px dashed var(--line)}
+.step:last-child{border-bottom:none}
+.step .no{
+  width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--navy2),var(--accent));
+}
+.step.c1 .no{background:linear-gradient(135deg,#1a8a63,#26ae80)}
+.step.c2 .no{background:linear-gradient(135deg,#c4701f,#e8893b)}
+.step.c3 .no{background:linear-gradient(135deg,#4a6ee0,#6b8ef7)}
+.step .ttl{font-size:14.5px;font-weight:700;margin-bottom:4px}
+.step .tx{font-size:13px;color:#333d4e;line-height:1.78}
+.step .tx code{background:#eef1f8;border-radius:4px;padding:1px 6px;font-size:12px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+
+/* ---------- Questions ---------- */
+.q{display:flex;gap:13px;padding:13px 0;border-bottom:1px dashed var(--line)}
+.q:last-child{border-bottom:none}
+.q .n{flex:0 0 25px;height:25px;border-radius:8px;background:#eef1f8;color:var(--accent);
+  display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800}
+.q .t{font-size:13.2px;line-height:1.78}
+.q .t b{font-weight:700}
+
+/* ---------- Source ---------- */
+.src{font-size:12.4px;color:var(--sub);line-height:1.85}
+.src li{margin-left:17px;padding:2px 0}
+.src .disc{margin-top:14px;padding:12px 15px;border-radius:10px;background:#fdf6ec;
+  border-left:3px solid var(--warn);color:#7a4c14;font-size:12.6px;line-height:1.75}
+footer{text-align:center;font-size:11.5px;color:var(--mute);margin-top:34px;line-height:1.9}
+
+@media(max-width:1000px){
+  .grid5{grid-template-columns:repeat(2,1fr)}
+  .pf{grid-template-columns:1fr}
+}
+@media(max-width:620px){
+  .grid5{grid-template-columns:1fr}
+  .hero h1{font-size:23px}
+  .dim{grid-template-columns:1fr;gap:4px}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <h1>__TITLE__</h1>
+    <div class="meta">
+      <span>数据截至 <b>__ASOF__</b></span>
+      <span>标的 <b>__SYMS__</b></span>
+      <span>体检维度 <b>__DIMS__</b></span>
+    </div>
+    <div class="verdict">__HERO__</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ============ 1 结论速览 ============ -->
+  <section>
+    <h2><span class="n">01</span>体检结论速览</h2>
+    <p class="lede">综合分 = 基本面质量 45% + 资金动向 20% + 估值 20% + 技术位置 15%。四维均按绝对锚定映射至 0–100（非截面极值归一），因此分数本身可跨期复算、可与后续月份直接对比。</p>
+    <div class="grid5" id="verdictCards"></div>
+    <p class="subh">读数参考：≥70 质地与位置双优，可作核心；55–70 逻辑成立但某维度明显拖累；＜50 存在至少两个维度的实质缺陷，需给出减仓纪律。</p>
+  </section>
+
+  <!-- ============ 2 总览表 ============ -->
+  <section>
+    <h2><span class="n">02</span>__N__ 只总览（一表看全）</h2>
+    <p class="lede">估值与财务为 __FY__ 口径；行情、资金、技术为 __ASOF__。涨红跌绿。</p>
+    <div class="tblwrap">
+      <table>
+        <thead>
+          <tr>
+            <th>标的</th><th>收盘价</th><th>当日</th><th>近5日</th><th>近20日</th>
+            <th>PE-TTM</th><th>PE 5年分位</th><th>PB</th><th>PB 5年分位</th><th>股息率</th>
+            <th>ROE</th><th>净利率</th><th>毛利率</th><th>营收同比</th><th>归母净利同比</th>
+            <th>资产负债率</th><th>流动比率</th><th>20日主力净流入</th>
+          </tr>
+        </thead>
+        <tbody id="overviewBody"></tbody>
+      </table>
+    </div>
+    <p class="subh">单位：价格__CCY__、比率与分位为 %、主力净流入为亿元。<b>PE/PB 分位越低代表越便宜</b>（相对自身近 5 年）。股息率 = 近 12 个月已实施现金分红 / 最新收盘价。</p>
+  </section>
+
+  <!-- ============ 3 增长 vs 估值 ============ -->
+  <section>
+    <h2><span class="n">03</span>性价比：增长 vs 估值位置</h2>
+    <p class="lede">横轴为归母净利润同比增速，纵轴为 PE 五年历史分位，气泡面积代表总市值。</p>
+    <div class="card"><div class="chart tall" id="c1"></div>
+      <div class="legend-note">
+        <span><i style="background:#2f5ad4"></i>右下角最理想（高增 + 低估）</span>
+        <span><i style="background:#e8893b"></i>左上角最差（负增 + 高估位）</span>
+      </div>
+    </div>
+    __NOTE_S3__
+  </section>
+
+  <!-- ============ 4 四维得分 ============ -->
+  <section>
+    <h2><span class="n">04</span>四维得分对照</h2>
+    <p class="lede">按综合分从高到低排列；每一维 0–100，越高越好。</p>
+    <div class="card"><div class="chart tall" id="c2"></div></div>
+    __NOTE_S4__
+  </section>
+
+  <!-- ============ 5 资金 ============ -->
+  <section>
+    <h2><span class="n">05</span>主力资金动向</h2>
+    <p class="lede">20 日 / 5 日 / 当日主力净流入（亿元）。注意 20 日柱状已按市值归一并标注强度，绝对值大小不完全可比。</p>
+    <div class="card"><div class="chart" id="c3"></div></div>
+    __NOTE_S5__
+  </section>
+
+  <!-- ============ 6 涨跌 vs 指数 ============ -->
+  <section>
+    <h2><span class="n">06</span>涨跌幅与超额：谁在裸泳</h2>
+    <p class="lede">近 20 日与近 1 年累计涨跌幅，并对照沪深300 同期表现。</p>
+    <div class="card"><div class="chart" id="c4"></div></div>
+    __NOTE_S6__
+  </section>
+
+  <!-- ============ 7 相关性 ============ -->
+  <section>
+    <h2><span class="n">07</span>组合结构：相关性与集中度</h2>
+    <p class="lede">基于 __N__ 只标的近 __CORR_N__ 个交易日（__CORR_SPAN__）日收益率自算。</p>
+    <div class="card"><div class="chart tall" id="c5"></div>
+      <div class="legend-note">
+        <span><i style="background:#21a675"></i>负相关（分散作用）</span>
+        <span><i style="background:#f3f5fa;border:1px solid #e3e7ef"></i>接近 0（无关联）</span>
+        <span><i style="background:#d8493f"></i>正相关（同涨同跌）</span>
+      </div>
+    </div>
+    __NOTE_S7__
+  </section>
+
+  <!-- ============ 8 逐只体检 ============ -->
+  <section>
+    <h2><span class="n">08</span>逐只体检</h2>
+    <p class="lede">每只按「估值 → 基本面 → 资金 → 技术」四项过一遍，末尾给判断。</p>
+    <div id="stockCards"></div>
+  </section>
+
+  <!-- ============ 9 组合视角 ============ -->
+  <section>
+    <h2><span class="n">09</span>组合视角：这不只是 __N__ 只散票</h2>
+    __PORTFOLIO__
+  </section>
+
+  <!-- ============ 10 优先级 ============ -->
+  <section>
+    <h2><span class="n">10</span>加减仓优先级</h2>
+    <p class="lede">先处理逻辑最弱的，再处理贵的，最后处理"好但没资金"的——顺序错了会先砍到底部、留住高位。</p>
+    <div class="card">__STEPS__</div>
+
+    <div class="card" style="margin-top:14px">
+<!--SENS_START-->
+      <h3 style="font-size:14.5px;font-weight:700;margin-bottom:4px">结论稳健性检验：换个权重，谁垫底？</h3>
+      <p style="font-size:13px;color:var(--sub);margin-bottom:12px;line-height:1.75">
+        上面"首砍 __FIRSTCUT__"是<b>基准权重（质量 45% / 资金 20% / 估值 20% / 技术 15%）</b>下的结论。权重是主观选择，所以有义务交代它在什么条件下会翻转——下表把基本面质量权重从 <b>15% 扫到 70%（12 种情景）</b>，其余三维按基准比例等比分配剩余权重：
+      </p>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr><th>基本面质量权重</th><th>15–20%</th><th>25–35%</th><th>40–45%（基准）</th><th>50–70%</th><th>100%（纯基本面）</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="b">垫底（该砍）</td><td class="down b">__LAST_LOW__</td><td class="down b">__LAST_35__</td><td class="down b">__LAST_BASE__</td><td class="down b">__LAST_HIGH__</td><td class="down b">__LAST_PURE__</td></tr>
+            <tr><td class="b">次弱</td><td>__S2_LOW__</td><td>__S2_35__</td><td>__S2_BASE__</td><td>__S2_HIGH__</td><td>__S2_PURE__</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout" style="margin-top:14px">__NOTE__</div>
+<!--SENS_END-->
+    </div>
+  </section>
+
+  <!-- ============ 11 前提追问 ============ -->
+  <section>
+    <h2><span class="n">11</span>先回答 __NQ__ 个问题，"该砍哪只"才精准</h2>
+    <p class="lede">上面的排序基于<b>标的本身优劣</b>（等权假设）。落到你的实盘，结论会随以下三个前提变化。</p>
+    <div class="card">
+      __QUESTIONS__
+    </div>
+  </section>
+
+  <!-- ============ 12 来源 ============ -->
+  <section>
+    <h2><span class="n">12</span>数据来源与口径</h2>
+    <div class="card src">
+      <ul>
+        __SOURCES__
+      <div class="disc"><b>免责声明：</b>本报告为基于公开数据的多维度量化分析，<b>不构成任何投资建议</b>，也不构成对任何证券的买卖要约或推荐。评分模型与权重设置包含主观选择，不同权重会得到不同排序；分位数据采用 5 年窗口，更长周期（如 10 年）口径可能略有差异。数据可能存在延迟或口径差异，关键数据请以交易所及公司公告为准。投资有风险，决策请结合个人风险承受能力并自行核实。</div>
+    </div>
+  </section>
+
+  <footer>
+    __FOOTER__
+  </footer>
+</div>
+
+<script>/*__ECHARTS__*/</script>
+<script>
+/* ==================== 数据 ==================== */
+const STOCKS = __DATA__;
+const CORR   = __CORR__;
+const CORR_AVG = __CORRAVG__;
+const IDX20 = __IDX20__;
+
+const COL = { up:'#d8493f', down:'#21a675', accent:'#3a6df0', accent2:'#6b8ef7',
+              warn:'#e8893b', navy:'#1b2a4e', sub:'#5d6a7d', line:'#e3e7ef', mute:'#8b95a5' };
+const PAL = ['#3a6df0','#e8893b','#21a675','#9b6bd6','#d8493f'];
+
+const $ = s => document.querySelector(s);
+const f2 = v => (v>=0?'+':'') + v.toFixed(2) + '%';
+const cls = v => v>=0 ? 'up' : 'down';
+const ci = v => v>=0 ? COL.up : COL.down;
+
+/* ==================== 1 结论卡 ==================== */
+(function(){
+  const map = { '保留':'keep', '观察':'watch', '减仓':'cut' };
+  const barCol = { keep:'linear-gradient(90deg,#3a6df0,#6b8ef7)',
+                   watch:'linear-gradient(90deg,#e8893b,#f0b070)',
+                   cut:'linear-gradient(90deg,#21a675,#4cc79c)' };
+  $('#verdictCards').innerHTML = STOCKS.map((s,i)=>{
+    const k = map[s.verdict];
+    return `<div class="vc ${k}">
+      <div class="rank">#${i+1}</div>
+      <div class="nm">${s.name}</div>
+      <div class="cd">${s.scode} · ${s.ind}</div>
+      <div class="score">${s.total.toFixed(1)}<small>分</small></div>
+      <div class="bar"><i style="width:${s.total}%;background:${barCol[k]}"></i></div>
+      <span class="tag">${s.verdict} · ${s.vtag}</span>
+      <div class="why">${s._why}</div>
+    </div>`;
+  }).join('');
+})();
+
+/* ==================== 2 总览表 ==================== */
+(function(){
+  const rows = STOCKS.slice().sort((a,b)=>a.code.localeCompare(b.code));
+  const order = ['sh600519','sz300750','sz002594','sh600276','sz002475'];
+  const map = { '保留':'d-keep', '观察':'d-watch', '减仓':'d-cut' };
+  $('#overviewBody').innerHTML = order.map(c=>{
+    const s = STOCKS.find(x=>x.code===c);
+    const td = (v,cl='')=>`<td class="${cl}">${v}</td>`;
+    return `<tr>
+      <td class="b"><span class="dot ${map[s.verdict]}"></span>${s.name}<br>
+        <span style="font-size:11px;color:var(--mute);font-weight:400">${s.scode}</span></td>
+      ${td(s.px.toFixed(2),'b')}
+      ${td(f2(s.d1),cls(s.d1)+' b')}
+      ${td(f2(s.d5),cls(s.d5))}
+      ${td(f2(s.d20),cls(s.d20)+' b')}
+      ${td(s.pe.toFixed(2))}
+      ${td(s.pepct.toFixed(2)+'%', s.pepct<10?'':'mut')}
+      ${td(s.pb.toFixed(2))}
+      ${td(s.pbpct.toFixed(2)+'%', s.pbpct<10?'':'mut')}
+      ${td(s.dy.toFixed(2)+'%')}
+      ${td(s.roe.toFixed(2)+'%', s.roe>=24?'up':'')}
+      ${td(s.npm.toFixed(2)+'%')}
+      ${td(s.gpm.toFixed(2)+'%')}
+      ${td(f2(s.rev_yoy),cls(s.rev_yoy))}
+      ${td(f2(s.np_yoy),cls(s.np_yoy)+' b')}
+      ${td(s.debt.toFixed(2)+'%', s.debt>60?'down':'')}
+      ${td(s.cr.toFixed(2), s.cr<1?'down':'')}
+      ${td(s.ff20.toFixed(2), 'down b')}
+    </tr>`;
+  }).join('');
+})();
+
+/* ==================== 3 气泡图 ==================== */
+const charts = [];
+function C(id, opt){ const el=$('#'+id); const c=echarts.init(el); c.setOption(opt); charts.push(c); return c; }
+window.addEventListener('resize', ()=>charts.forEach(c=>c.resize()));
+
+C('c1', {
+  grid:{ left:78, right:52, top:46, bottom:64 },
+  tooltip:{ trigger:'item', borderWidth:0, backgroundColor:'rgba(23,30,43,.94)',
+    textStyle:{color:'#fff',fontSize:12.5}, padding:[10,14],
+    formatter: p => {
+      const s = p.data.s;
+      return `<b>${s.name}</b> <span style="color:#9fb0cc">${s.scode}</span><br>
+        归母净利同比 <b>${f2(s.np_yoy)}</b><br>
+        PE 五年分位 <b>${s.pepct.toFixed(2)}%</b>（PE-TTM ${s.pe.toFixed(2)}）<br>
+        总市值 <b>${s.mcap} 亿</b>`;
+    } },
+  xAxis:{ name:'归母净利润同比 →', nameLocation:'middle', nameGap:36,
+    nameTextStyle:{color:COL.sub,fontSize:12,fontWeight:600},
+    axisLine:{lineStyle:{color:COL.line}}, axisTick:{show:false},
+    axisLabel:{color:COL.sub,fontSize:11.5,formatter:v=>v+'%'},
+    splitLine:{lineStyle:{color:'#f2f4f8'}}, min:-26, max:50 },
+  yAxis:{ name:'PE 五年分位 ↑（越高越贵）', nameTextStyle:{color:COL.sub,fontSize:12,fontWeight:600},
+    axisLine:{show:false}, axisTick:{show:false},
+    axisLabel:{color:COL.sub,fontSize:11.5,formatter:v=>v+'%'},
+    splitLine:{lineStyle:{color:'#f2f4f8'}}, min:0, max:46, inverse:true },
+  series:[{
+    type:'scatter',
+    symbolSize: d => Math.max(34, Math.sqrt(d[2])*3.1),
+    data: STOCKS.map(s=>({
+      value:[s.np_yoy, s.pepct, s.mcap], s,
+      itemStyle:{ color: s.verdict==='保留'?COL.accent:(s.verdict==='观察'?COL.warn:COL.down),
+        opacity:.82, borderColor:'#fff', borderWidth:2,
+        shadowBlur:14, shadowColor:'rgba(23,30,43,.16)' }
+    })),
+    label:{ show:true, position:'inside', color:'#fff', fontSize:11.5, fontWeight:700,
+      formatter: p => p.data.s.name },
+    markLine:{ silent:true, symbol:'none',
+      lineStyle:{color:'#c9d2e2',type:'dashed',width:1},
+      label:{show:true,color:COL.mute,fontSize:10.5,formatter:'PE 分位 25%'},
+      data:[{yAxis:25}] },
+    emphasis:{ scale:1.1 }
+  }]
+});
+
+/* ==================== 4 四维得分 ==================== */
+C('c2', {
+  grid:{ left:78, right:34, top:52, bottom:52 },
+  tooltip:{ trigger:'axis', axisPointer:{type:'shadow'},
+    borderWidth:0, backgroundColor:'rgba(23,30,43,.94)', textStyle:{color:'#fff',fontSize:12.5},
+    padding:[10,14],
+    formatter: ps => {
+      const s = STOCKS.find(x=>x.name===ps[0].name);
+      return `<b>${s.name}</b> 综合 <b>${s.total.toFixed(1)}</b><br>
+        基本面质量 <b>${s.qual.toFixed(1)}</b><br>资金动向 <b>${s.flow.toFixed(1)}</b><br>
+        估值性价比 <b>${s.val.toFixed(1)}</b><br>技术位置 <b>${s.tech.toFixed(1)}</b>`;
+    } },
+  legend:{ top:8, itemWidth:11, itemHeight:11, itemGap:18,
+    textStyle:{color:COL.sub,fontSize:12.2} },
+  xAxis:{ type:'category', data:STOCKS.map(s=>s.name),
+    axisLine:{lineStyle:{color:COL.line}}, axisTick:{show:false},
+    axisLabel:{color:'#2a3446',fontSize:12.5,fontWeight:600} },
+  yAxis:{ max:100, axisLine:{show:false}, axisTick:{show:false},
+    axisLabel:{color:COL.sub,fontSize:11.5}, splitLine:{lineStyle:{color:'#f2f4f8'}} },
+  series:[
+    { name:'基本面质量(45%)', type:'bar', barGap:'12%', barWidth:'13%',
+      data:STOCKS.map(s=>s.qual), itemStyle:{color:'#2f5ad4',borderRadius:[4,4,0,0]},
+      label:{show:true,position:'top',color:COL.sub,fontSize:10.5,formatter:p=>p.value.toFixed(0)} },
+    { name:'资金动向(20%)', type:'bar', barWidth:'13%',
+      data:STOCKS.map(s=>s.flow), itemStyle:{color:'#e8893b',borderRadius:[4,4,0,0]} },
+    { name:'估值性价比(20%)', type:'bar', barWidth:'13%',
+      data:STOCKS.map(s=>s.val), itemStyle:{color:'#21a675',borderRadius:[4,4,0,0]} },
+    { name:'技术位置(15%)', type:'bar', barWidth:'13%',
+      data:STOCKS.map(s=>s.tech), itemStyle:{color:'#9b6bd6',borderRadius:[4,4,0,0]} },
+    { name:'综合分', type:'line', smooth:false, symbol:'circle', symbolSize:9,
+      data:STOCKS.map(s=>s.total),
+      lineStyle:{color:COL.navy,width:2.5}, itemStyle:{color:COL.navy,borderColor:'#fff',borderWidth:2},
+      label:{show:true,position:'top',color:COL.navy,fontSize:11.5,fontWeight:700,
+        formatter:p=>p.value.toFixed(1)} }
+  ]
+});
+
+/* ==================== 5 主力资金 ==================== */
+C('c3', {
+  grid:{ left:78, right:44, top:52, bottom:56 },
+  tooltip:{ trigger:'axis', axisPointer:{type:'shadow'},
+    borderWidth:0, backgroundColor:'rgba(23,30,43,.94)', textStyle:{color:'#fff',fontSize:12.5},
+    padding:[10,14],
+    formatter: ps => {
+      const s = STOCKS.find(x=>x.name===ps[0].name);
+      return `<b>${s.name}</b><br>
+        20 日 <b>${s.ff20.toFixed(2)} 亿</b>（占市值 ${s._o20.toFixed(3)}%）<br>
+        5 日 <b>${s.ff5.toFixed(2)} 亿</b>（占市值 ${s._o5.toFixed(3)}%）<br>
+        当日 <b>${s.ff1.toFixed(2)} 亿</b>（占市值 ${s._o1.toFixed(3)}%）`;
+    } },
+  legend:{ top:8, itemWidth:11, itemHeight:11, itemGap:18, textStyle:{color:COL.sub,fontSize:12.2} },
+  xAxis:{ type:'category', data:STOCKS.map(s=>s.name),
+    axisLine:{lineStyle:{color:COL.line}}, axisTick:{show:false},
+    axisLabel:{color:'#2a3446',fontSize:12.5,fontWeight:600} },
+  yAxis:{ name:'亿元', nameTextStyle:{color:COL.sub,fontSize:11.5},
+    axisLine:{show:false}, axisTick:{show:false},
+    axisLabel:{color:COL.sub,fontSize:11.5}, splitLine:{lineStyle:{color:'#f2f4f8'}} },
+  series:[
+    { name:'20 日主力净流入', type:'bar', barWidth:'20%',
+      data:STOCKS.map(s=>({value:s.ff20, itemStyle:{color:ci(s.ff20),borderRadius:[0,0,4,4]}})),
+      label:{show:true,position:'bottom',color:COL.sub,fontSize:10.5,fontWeight:600,
+        formatter:p=>p.value.toFixed(1)} },
+    { name:'5 日主力净流入', type:'bar', barWidth:'20%',
+      data:STOCKS.map(s=>({value:s.ff5, itemStyle:{color:ci(s.ff5),opacity:.62,borderRadius:[0,0,4,4]}})) },
+    { name:'当日主力净流入', type:'bar', barWidth:'20%',
+      data:STOCKS.map(s=>({value:s.ff1, itemStyle:{color:ci(s.ff1),opacity:.34,borderRadius:[0,0,4,4]}})) }
+  ]
+});
+
+/* ==================== 6 涨跌与超额 ==================== */
+C('c4', {
+  grid:{ left:78, right:132, top:52, bottom:76 },
+  tooltip:{ trigger:'axis', axisPointer:{type:'shadow'},
+    borderWidth:0, backgroundColor:'rgba(23,30,43,.94)', textStyle:{color:'#fff',fontSize:12.5},
+    padding:[10,14],
+    formatter: ps => {
+      const s = STOCKS.find(x=>x.name===ps[0].name);
+      return `<b>${s.name}</b><br>近 20 日 <b>${f2(s.d20)}</b><br>
+        近 1 年 <b>${f2(s.y1)}</b><br>
+        20 日超额（vs 沪深300）<b>${s.exc>=0?'+':''}${s.exc.toFixed(2)}pct</b>`;
+    } },
+  legend:{ top:8, itemWidth:11, itemHeight:11, itemGap:18, textStyle:{color:COL.sub,fontSize:12.2} },
+  xAxis:{ type:'category', data:STOCKS.map(s=>s.name),
+    axisLine:{lineStyle:{color:COL.line}}, axisTick:{show:false},
+    axisLabel:{color:'#2a3446',fontSize:12.5,fontWeight:600} },
+  yAxis:{ name:'%', nameTextStyle:{color:COL.sub,fontSize:11.5},
+    axisLine:{show:false}, axisTick:{show:false},
+    axisLabel:{color:COL.sub,fontSize:11.5,formatter:v=>v+'%'},
+    splitLine:{lineStyle:{color:'#f2f4f8'}} },
+  series:[
+    { name:'近 20 日涨跌', type:'bar', barWidth:'24%',
+      data:STOCKS.map(s=>({value:s.d20, itemStyle:{color:ci(s.d20),borderRadius:[0,0,4,4]}})),
+      label:{show:true,position:'bottom',color:COL.sub,fontSize:10.5,fontWeight:600,
+        formatter:p=>p.value.toFixed(1)+'%'} },
+    { name:'近 1 年涨跌', type:'bar', barWidth:'24%',
+      data:STOCKS.map(s=>({value:s.y1, itemStyle:{color:ci(s.y1),opacity:.42,borderRadius:[0,0,4,4]}})) },
+    { name:'沪深300 近20日', type:'line', symbol:'none', silent:true,
+      data:STOCKS.map(()=>IDX20),
+      lineStyle:{color:COL.navy,width:2,type:'dashed'},
+      endLabel:{show:true,formatter:'沪深300 '+IDX20+'%',color:COL.navy,fontSize:11,fontWeight:600} }
+  ]
+});
+
+/* ==================== 7 相关性热力图 ==================== */
+(function(){
+  const names = STOCKS.map(s=>s.name);
+  const data = [];
+  for(let i=0;i<5;i++) for(let j=0;j<5;j++) data.push([j,i,+(CORR[i][j]).toFixed(3)]);
+  C('c5', {
+    grid:{ left:96, right:74, top:44, bottom:62 },
+    tooltip:{ borderWidth:0, backgroundColor:'rgba(23,30,43,.94)', textStyle:{color:'#fff',fontSize:12.5},
+      padding:[10,14],
+      formatter: p => {
+        const a=names[p.data[1]], b=names[p.data[0]], v=p.data[2];
+        return a===b ? `<b>${a}</b><br>自身` :
+          `<b>${a}</b> ↔ <b>${b}</b><br>相关系数 <b>${v>=0?'+':''}${v.toFixed(3)}</b><br>
+           <span style="color:#9fb0cc">${v>0.3?'同涨同跌较明显':(v<0?'负相关，具备分散作用':'关联较弱')}</span>`;
+      } },
+    xAxis:{ type:'category', data:names, splitArea:{show:false},
+      axisLine:{lineStyle:{color:COL.line}}, axisTick:{show:false},
+      axisLabel:{color:'#2a3446',fontSize:12,fontWeight:600} },
+    yAxis:{ type:'category', data:names, splitArea:{show:false},
+      axisLine:{show:false}, axisTick:{show:false},
+      axisLabel:{color:'#2a3446',fontSize:12,fontWeight:600} },
+    visualMap:{ min:-0.4, max:0.4, calculable:false, orient:'vertical',
+      right:12, top:'center', itemWidth:14, itemHeight:158,
+      textStyle:{color:COL.sub,fontSize:11},
+      inRange:{ color:['#21a675','#7fd0b0','#f3f5fa','#f0a49c','#d8493f'] } },
+    series:[{
+      type:'heatmap', data:data,
+      label:{ show:true, fontSize:11.5, fontWeight:600, color:'#2a3446',
+        formatter: p => p.data[2].toFixed(2) },
+      itemStyle:{ borderColor:'#fff', borderWidth:2.5, borderRadius:5 },
+      emphasis:{ itemStyle:{ shadowBlur:10, shadowColor:'rgba(23,30,43,.3)' } }
+    }]
+  });
+})();
+
+/* ==================== 8 逐只体检卡 ==================== */
+(function(){
+  const map = { '保留':'keep', '观察':'watch', '减仓':'cut' };
+  const K = (lb,v,c) => `<span class="kpi">${lb}<b class="${c||''}">${v}</b></span>`;
+  $('#stockCards').innerHTML = STOCKS.map(s=>{
+    const k = map[s.verdict];
+    return `<div class="stk">
+      <div class="stk-hd">
+        <span class="nm">${s.name}</span>
+        <span class="cd">${s.scode}</span>
+        <span class="ind">${s.ind}</span>
+        <span class="px">收 <b>${s.px.toFixed(2)}</b> 元 &nbsp;·&nbsp;
+          <span class="${cls(s.d20)}">近20日 ${f2(s.d20)}</span> &nbsp;·&nbsp;
+          <span class="mut">年化波动 ${s.vol}%</span></span>
+        <span class="vtag ${k}">${s.verdict} · ${s.vtag}</span>
+      </div>
+      <div class="stk-bd">
+        <div class="dim"><div class="lb">估值 <em>${s.val.toFixed(0)}分</em></div><div class="tx">${s._val}</div></div>
+        <div class="dim"><div class="lb">基本面 <em>${s.qual.toFixed(0)}分</em></div><div class="tx">${s._qual}</div></div>
+        <div class="dim"><div class="lb">资金 <em>${s.flow.toFixed(0)}分</em></div><div class="tx">${s._flow}</div></div>
+        <div class="dim"><div class="lb">技术 <em>${s.tech.toFixed(0)}分</em></div><div class="tx">${s._tech}</div></div>
+        <div class="callout ${k}">${s._call}</div>
+      </div>
+    </div>`;
+  }).join('');
+})();
+</script>
+</body>
+</html>

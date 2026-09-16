@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>__TITLE__</title>
+<style>
+:root{
+  --bg:#eef0f6; --card:#ffffff; --card2:#f7f8fc;
+  --ink:#171e2b; --sub:#5d6a7d; --mute:#8b95a5;
+  --line:#e3e7ef; --line2:#eef1f6;
+  --accent:#3a6df0; --accent2:#6b8ef7;
+  --up:#d8493f; --down:#21a675; --warn:#e8893b;
+  --navy1:#1b2a4e; --navy2:#2c4278;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  background:var(--bg);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased;padding:0 0 64px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+.hero{background:linear-gradient(135deg,var(--navy1) 0%,var(--navy2) 62%,#3a5391 100%);
+  color:#eef2fb;padding:44px 0 40px;margin-bottom:28px;border-bottom:3px solid var(--accent)}
+.hero h1{font-size:30px;font-weight:700;letter-spacing:.5px;line-height:1.35}
+.hero .meta{margin-top:10px;font-size:13px;color:#a9b8d6;display:flex;flex-wrap:wrap;gap:16px}
+.hero .meta b{color:#dce6fa;font-weight:600}
+.hero .verdict{margin-top:22px;background:rgba(255,255,255,.08);border-left:3px solid #7fa2ff;
+  border-radius:0 10px 10px 0;padding:16px 20px;font-size:14.5px;line-height:1.85;color:#e8eefc}
+.hero .verdict .k{color:#ffd98a;font-weight:700}
+.hero .verdict .bad{color:#ff9d94;font-weight:700}
+section{margin-bottom:34px}
+h2{font-size:19px;font-weight:700;color:var(--ink);padding-left:13px;
+  border-left:4px solid var(--accent);margin-bottom:6px;line-height:1.4}
+h2 .n{color:var(--mute);font-weight:500;font-size:14px;margin-right:6px}
+.lede{font-size:13.5px;color:var(--sub);margin:0 0 16px 17px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;
+  box-shadow:0 1px 2px rgba(23,30,43,.04),0 8px 24px rgba(23,30,43,.04)}
+.card+.card{margin-top:14px}
+h3{font-size:14.5px;font-weight:700;margin-bottom:10px}
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:15px 14px;
+  box-shadow:0 1px 2px rgba(23,30,43,.04),0 8px 22px rgba(23,30,43,.045)}
+.kpi .lb{font-size:11.5px;color:var(--mute);font-weight:600;letter-spacing:.2px}
+.kpi .vl{font-size:22px;font-weight:800;margin-top:6px;line-height:1.15;font-variant-numeric:tabular-nums;letter-spacing:-.4px}
+.kpi .vl small{font-size:11.5px;font-weight:600;color:var(--mute);margin-left:3px}
+.kpi .sub{font-size:11.5px;color:var(--sub);margin-top:4px}
+/* table */
+.tblwrap{overflow-x:auto;border-radius:14px;border:1px solid var(--line);background:var(--card);
+  box-shadow:0 1px 2px rgba(23,30,43,.04),0 8px 24px rgba(23,30,43,.04)}
+table{width:100%;border-collapse:collapse;font-size:12.7px;font-variant-numeric:tabular-nums}
+th,td{padding:9px 11px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line2)}
+th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:var(--card);z-index:1}
+thead th{background:var(--card2);color:var(--sub);font-weight:600;font-size:11.8px;border-bottom:1.5px solid var(--line)}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:#fafbfe}
+tbody tr:hover td:first-child{background:#fafbfe}
+td.b{font-weight:700}
+.up{color:var(--up)} .down{color:var(--down)} .mut{color:var(--mute)}
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 7px;border-radius:5px}
+.t-red{background:#fdeceb;color:#b8382f}
+.t-green{background:#e6f6ef;color:#1a8a63}
+.t-amber{background:#fdf0e2;color:#c4701f}
+.t-blue{background:#e8eefe;color:#2f5ad4}
+.chart{width:100%;height:360px}.chart.tall{height:420px}
+.legend-note{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--sub);margin-top:10px}
+.legend-note i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.subh{font-size:12.4px;color:var(--mute);margin-top:9px;line-height:1.7}
+/* stock cards */
+.stk{margin-bottom:16px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card);
+  box-shadow:0 1px 2px rgba(23,30,43,.04),0 8px 24px rgba(23,30,43,.04)}
+.stk-hd{display:flex;align-items:center;gap:13px;padding:14px 20px;background:var(--card2);
+  border-bottom:1px solid var(--line);flex-wrap:wrap}
+.stk-hd .nm{font-size:16.5px;font-weight:700}
+.stk-hd .cd{font-size:12px;color:var(--mute);font-variant-numeric:tabular-nums}
+.stk-hd .ind{font-size:11.5px;color:var(--sub);background:#eef1f8;border-radius:5px;padding:2px 8px}
+.stk-hd .px{margin-left:auto;font-size:12.8px;color:var(--sub);font-variant-numeric:tabular-nums}
+.stk-hd .px b{font-size:16px;color:var(--ink)}
+.stk-bd{padding:16px 20px 18px}
+.dim{display:grid;grid-template-columns:96px 1fr;gap:12px;padding:9px 0;border-bottom:1px dashed var(--line2)}
+.dim:last-of-type{border-bottom:none}
+.dim .lb{font-size:12.5px;font-weight:700;color:var(--sub);display:flex;align-items:center;gap:6px}
+.dim .lb em{font-style:normal;font-size:10.5px;color:var(--mute);font-weight:600}
+.dim .tx{font-size:13px;line-height:1.78;color:#2a3446}
+.callout{margin-top:12px;padding:12px 15px;border-radius:10px;font-size:13px;line-height:1.75;
+  background:#f4f7fe;border-left:3px solid var(--accent)}
+.callout.red{background:#fdf2f1;border-left-color:var(--up)}
+.callout.green{background:#f1faf6;border-left-color:var(--down)}
+.callout.amber{background:#fdf6ec;border-left-color:var(--warn)}
+.callout b{font-weight:700}
+/* priority */
+.step{display:grid;grid-template-columns:44px 1fr;gap:15px;padding:15px 0;border-bottom:1px dashed var(--line)}
+.step:last-child{border-bottom:none}
+.step .no{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:800;color:#fff}
+.step.c1 .no{background:linear-gradient(135deg,#1a8a63,#26ae80)}
+.step.c2 .no{background:linear-gradient(135deg,#c4701f,#e8893b)}
+.step.c3 .no{background:linear-gradient(135deg,#4a6ee0,#6b8ef7)}
+.step .ttl{font-size:14.5px;font-weight:700;margin-bottom:4px}
+.step .tx{font-size:13px;color:#333d4e;line-height:1.78}
+.step .tx code{background:#eef1f8;border-radius:4px;padding:1px 6px;font-size:12px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+/* cross */
+.pf{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.pf .card{margin:0}
+.pf li{padding:7px 0 7px 15px;position:relative;border-bottom:1px dashed var(--line2);font-size:13px;list-style:none;line-height:1.72}
+.pf li:last-child{border-bottom:none}
+.pf li:before{content:"";position:absolute;left:0;top:15px;width:5px;height:5px;border-radius:50%;background:var(--accent2)}
+.pf li.risk:before{background:var(--up)}
+.src{font-size:12.4px;color:var(--sub);line-height:1.85}
+.src li{margin-left:17px;padding:2px 0}
+.disc{margin-top:14px;padding:12px 15px;border-radius:10px;background:#fdf6ec;
+  border-left:3px solid var(--warn);color:#7a4c14;font-size:12.6px;line-height:1.75}
+.gap{margin-top:14px;padding:12px 15px;border-radius:10px;background:#fdf2f1;
+  border-left:3px solid var(--up);color:#7d2b24;font-size:12.6px;line-height:1.75}
+footer{text-align:center;font-size:11.5px;color:var(--mute);margin-top:34px;line-height:1.9}
+@media(max-width:1000px){.kpis{grid-template-columns:repeat(3,1fr)}.pf{grid-template-columns:1fr}}
+@media(max-width:620px){.kpis{grid-template-columns:repeat(2,1fr)}.hero h1{font-size:23px}.dim{grid-template-columns:1fr;gap:4px}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <h1>__TITLE__</h1>
+    <div class="meta">
+      <span>账户 <b>__ACCOUNT__</b></span>
+      <span>数据时点 <b>__ASOF__</b></span>
+      <span>标的 <b>__SYMS__</b></span>
+      <span>报告日期 <b>__TODAY__</b></span>
+    </div>
+    <div class="verdict">__HERO__</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section>
+    <h2><span class="n">01</span>账户概览</h2>
+    <p class="lede">__FX_NOTE__</p>
+    <div class="kpis" id="kpis"></div>
+    <p class="subh">近 30 日区间为 __P30_RANGE__。区间收益与最大回撤由券商接口的每日资产序列自算，已剔除出入金影响（区间内出入金均为 0）。</p>
+  </section>
+
+  <section>
+    <h2><span class="n">02</span>持仓明细</h2>
+    <p class="lede">__POS_LEDE__</p>
+    <div class="tblwrap">
+      <table>
+        <thead><tr>
+          <th>标的</th><th>币种</th><th>数量</th><th>均价</th><th>现价</th>
+          <th>市值(原币)</th><th>市值(__CCY_SYM__)</th><th>权重</th><th>收益率</th><th>盈亏(__CCY_SYM__)</th>
+          <th>PE(TTM)</th><th>估值分位</th><th>近20日</th>
+        </tr></thead>
+        <tbody id="posBody"></tbody>
+      </table>
+    </div>
+    <p class="subh">估值分位 = 当前 PE 在过去 5 个财年年度 PE 区间中的位置（越低越便宜），样本量有限，仅作方向性参考。__PE_NOTE__</p>
+  </section>
+
+  <section>
+    <h2><span class="n">03</span>穿透后有效敞口 —— 本报告的核心</h2>
+    <p class="lede">__EXP_LEDE__</p>
+    <div class="card">
+      <div class="chart tall" id="c1"></div>
+      <div class="legend-note">
+        __EXP_LEGEND__
+        <span style="color:var(--mute)">虚线 = 净清算 100%，超出部分即为杠杆</span>
+      </div>
+    </div>
+    <p class="subh">__EXPOSURE_NOTE__</p>
+  </section>
+
+  <section>
+    <h2><span class="n">04</span>__LEV_TITLE__</h2>
+    <div class="card">
+      <div class="chart" id="c2"></div>
+      <div class="legend-note"><span>__LEV_NOTE__</span></div>
+    </div>
+    <p class="subh">__LEV_READING__</p>
+  </section>
+
+  <section>
+    <h2><span class="n">05</span>估值位置：谁贵、谁在价值陷阱里</h2>
+    <p class="lede">横条为该标的过去 5 个财年的 PE 区间，标记为当前 PE 所在位置。</p>
+    <div class="card"><div class="chart tall" id="c3"></div></div>
+    <p class="subh">__VAL_NOTE__</p>
+  </section>
+
+  <section>
+    <h2><span class="n">06</span>权重与盈亏：钱压在哪，赚亏在哪</h2>
+    <div class="card"><div class="chart" id="c4"></div></div>
+    <p class="subh">__ATTRIB_NOTE__</p>
+  </section>
+
+  <section>
+    <h2><span class="n">07</span>逐只点评</h2>
+    <p class="lede">每只按「仓位与盈亏 → 估值 → 基本面 → 结论」过一遍。</p>
+    <div id="stockCards"></div>
+  </section>
+
+  <section>
+    <h2><span class="n">08</span>__CROSS_TITLE__</h2>
+    <p class="lede">__CROSS_LEDE__</p>
+    __CROSS__
+  </section>
+
+  <section>
+    <h2><span class="n">09</span>调整优先级</h2>
+    <p class="lede">按「改起来最不痛、降风险最直接」排序，而不是按亏损多少排序。</p>
+    <div class="card" id="steps"></div>
+  </section>
+
+  <section>
+    <h2><span class="n">10</span>数据来源与口径</h2>
+    <div class="card src">
+      <ul>
+        __SOURCES__
+      
+      </ul>
+      <div class="gap"><b>数据缺口（必须知晓）：</b>__GAPS__</div>
+      <div class="disc">__DISCLAIMER__</div>
+    </div>
+  </section>
+
+  <footer>__FOOTER__</footer>
+</div>
+
+<script>/*__ECHARTS__*/</script>
+<script>
+const D = __DATA__;
+const COL = { up:'#d8493f', down:'#21a675', accent:'#3a6df0', warn:'#e8893b', navy:'#1b2a4e',
+              sub:'#5d6a7d', line:'#e3e7ef', mute:'#8b95a5' };
+const $ = s => document.querySelector(s);
+const f2 = v => (v>=0?'+':'') + v.toFixed(2) + '%';
+const cls = v => v>=0 ? 'up' : 'down';
+const ci  = v => v>=0 ? COL.up : COL.down;
+const SYM = D.baseCcySym || '$';
+const money = (v,d=2) => SYM + v.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+const charts=[];
+function C(id,opt){const c=echarts.init($('#'+id)); c.setOption(opt); charts.push(c); return c;}
+window.addEventListener('resize',()=>charts.forEach(c=>c.resize()));
+
+/* 01 KPI */
+(function(){
+  const a=D.account;
+  const items=[
+    {lb:'净清算', vl:money(a.netliq), sub:'含现金与持仓市值'},
+    {lb:'持仓市值', vl:money(a.gross), sub:'占净清算 '+(a.gross/a.netliq*100).toFixed(1)+'%'},
+    {lb:'现金', vl:money(a.cash), sub:'仅占 '+(a.cash/a.netliq*100).toFixed(2)+'%，几乎满仓'},
+    {lb:'未实现盈亏', vl:'<span class="up">'+money(a.upl,0)+'</span>', sub:'成本基础收益率 '+f2(a.upl_pct)},
+    {lb:'近 30 日收益', vl:'<span class="'+cls(a.p30d)+'">'+f2(a.p30d)+'</span>', sub:'年化 '+f2(a.ann)},
+    {lb:'期间最大回撤', vl:'<span class="down">'+a.mdd.toFixed(2)+'%</span>', sub:'同期波动可控'},
+  ];
+  $('#kpis').innerHTML = items.map(i=>`<div class="kpi"><div class="lb">${i.lb}</div>
+    <div class="vl">${i.vl}</div><div class="sub">${i.sub}</div></div>`).join('');
+})();
+
+/* 02 持仓表 */
+(function(){
+  const tag = p => {
+    if(p.pe_pct===null||p.pe_pct===undefined) return '<span class="tag t-blue">—</span>';
+    if(p.pe_pct>=80) return '<span class="tag t-red">'+p.pe_pct.toFixed(0)+'% 偏贵</span>';
+    if(p.pe_pct<=20) return '<span class="tag t-green">'+p.pe_pct.toFixed(0)+'% 偏便宜</span>';
+    return '<span class="tag t-amber">'+p.pe_pct.toFixed(0)+'% 中位</span>';
+  };
+  $('#posBody').innerHTML = D.positions.map(p=>`<tr>
+    <td class="b">${p.name}<br><span style="font-size:11px;color:var(--mute);font-weight:400">${p.sym}</span></td>
+    <td class="mut">${p.ccy}</td>
+    <td>${p.qty}</td>
+    <td>${p.cost}</td>
+    <td class="b">${p.px}</td>
+    <td class="mut">${p.mv_local}</td>
+    <td class="b">${money(p.mv)}</td>
+    <td class="b">${(p.w*100).toFixed(1)}%</td>
+    <td class="${cls(p.ret)} b">${f2(p.ret*100)}</td>
+    <td class="${cls(p.upl)} b">${(p.upl>=0?'+':'')}${money(p.upl,0).replace('$-','-')}</td>
+    <td>${p.pe===null?'<span class="mut">—</span>':p.pe.toFixed(2)}</td>
+    <td>${tag(p)}</td>
+    <td class="${cls(p.r20)}">${f2(p.r20)}</td>
+  </tr>`).join('');
+})();
+
+/* 03 穿透敞口 */
+(function(){
+  const segs=D.exposure.segs;
+  const total=D.exposure.total;
+  const labels=segs.map(s=>s.name);
+  C('c1',{
+    grid:{left:60,right:170,top:56,bottom:48},
+    tooltip:{trigger:'axis',axisPointer:{type:'shadow'},borderWidth:0,
+      backgroundColor:'rgba(23,30,43,.94)',textStyle:{color:'#fff',fontSize:12.5},padding:[10,14],
+      formatter: ps => {
+        let s='<b>穿透后敞口</b><br>合计 <b>'+total.toFixed(1)+'%</b>（净清算=100%）<br>';
+        ps.forEach(p=>{ if(p.value>0) s+=p.marker+p.seriesName+' <b>'+p.value.toFixed(2)+'%</b><br>'; });
+        return s;
+      }},
+    legend:{top:6,itemWidth:11,itemHeight:11,itemGap:16,textStyle:{color:COL.sub,fontSize:12.2},
+      data:D.exposure.groups.map(g=>g.name)},
+    xAxis:{type:'value',max:125,axisLine:{show:false},axisTick:{show:false},
+      axisLabel:{color:COL.sub,fontSize:11.5,formatter:v=>v+'%'},
+      splitLine:{lineStyle:{color:'#f2f4f8'}}},
+    yAxis:{type:'category',data:['穿透后敞口'],axisLine:{show:false},axisTick:{show:false},
+      axisLabel:{color:'#2a3446',fontSize:12.5,fontWeight:600}},
+    series:[
+      ...D.exposure.groups.map((g,gi)=>({
+        name:g.name,type:'bar',stack:'x',barWidth:56,
+        data:segs.filter(s=>s.group===g.name).map(s=>({
+          value:s.val, name:s.name,
+          itemStyle:{color:s.color, borderColor:'#fff', borderWidth:2,
+            borderRadius: s.first?[6,0,0,6]:(s.last?[0,6,6,0]:0)}})),
+        label:{show:true,position:'inside',color:'#fff',fontSize:12,fontWeight:700,
+          formatter:p=>p.value>=9?(p.data.name+' '+p.value.toFixed(1)+'%'):''}
+      })),
+      {name:'净清算线',type:'bar',stack:'x',silent:true,barWidth:56,data:[0],
+       itemStyle:{color:'transparent'},
+       markLine:{silent:true,symbol:'none',
+         lineStyle:{color:COL.navy,width:1.6,type:'dashed'},
+         label:{show:true,position:'end',color:COL.navy,fontSize:11.5,fontWeight:600,
+           formatter:'净清算 100%'},
+         data:[{xAxis:100}]}}
+    ]
+  });
+})();
+
+/* 04 TQQQ 衰减 */
+(function(){
+  const t=D.tqqq.decay;
+  C('c2',{
+    grid:{left:70,right:66,top:56,bottom:52},
+    tooltip:{trigger:'axis',axisPointer:{type:'shadow'},borderWidth:0,
+      backgroundColor:'rgba(23,30,43,.94)',textStyle:{color:'#fff',fontSize:12.5},padding:[10,14],
+      formatter: ps=>{
+        const i=ps[0].dataIndex, w=t.windows[i];
+        return `<b>${w.label}</b><br>${t.index_name} ${f2(w.idx)}<br>
+          理论 ${t.levMult} 倍 <b>${f2(w.theory)}</b><br>${t.levName} 实际 <b>${f2(w.actual)}</b><br>
+          <span style="color:#9fb0cc">衰减 ${(w.actual-w.theory).toFixed(2)}pct</span>`;
+      }},
+    legend:{top:6,itemWidth:11,itemHeight:11,itemGap:16,textStyle:{color:COL.sub,fontSize:12.2}},
+    xAxis:{type:'category',data:t.windows.map(w=>w.label),
+      axisLine:{lineStyle:{color:COL.line}},axisTick:{show:false},
+      axisLabel:{color:'#2a3446',fontSize:12.5,fontWeight:600}},
+    yAxis:{name:'%',nameTextStyle:{color:COL.sub,fontSize:11.5},axisLine:{show:false},axisTick:{show:false},
+      axisLabel:{color:COL.sub,fontSize:11.5,formatter:v=>v+'%'},splitLine:{lineStyle:{color:'#f2f4f8'}}},
+    series:[
+      {name:`理论 ${t.levMult} 倍（指数涨跌×${t.levMult}）`,type:'bar',barWidth:'26%',
+       data:t.windows.map(w=>w.theory),
+       itemStyle:{color:'#b9c2d4',borderRadius:[4,4,0,0]},
+       label:{show:true,position:'bottom',color:COL.mute,fontSize:10.5,formatter:p=>p.value.toFixed(2)}},
+      {name:`${t.levName} 实际涨跌`,type:'bar',barWidth:'26%',
+       data:t.windows.map(w=>({value:w.actual,itemStyle:{color:ci(w.actual),borderRadius:[4,4,0,0]}})),
+       label:{show:true,position:'bottom',color:COL.sub,fontSize:11,fontWeight:700,formatter:p=>p.value.toFixed(2)}},
+      {name:'衰减缺口',type:'line',symbol:'circle',symbolSize:9,
+       data:t.windows.map(w=>+(w.actual-w.theory).toFixed(2)),
+       lineStyle:{color:COL.warn,width:2},itemStyle:{color:COL.warn,borderColor:'#fff',borderWidth:2},
+       label:{show:true,position:'top',color:COL.warn,fontSize:11,fontWeight:700,
+         formatter:p=>(p.value>0?'+':'')+p.value+'pct'}}
+    ]
+  });
+})();
+
+/* 05 估值位置 */
+(function(){
+  const rows=D.valuation.filter(v=>v.pe!==null);
+  C('c3',{
+    grid:{left:96,right:120,top:40,bottom:48},
+    tooltip:{borderWidth:0,backgroundColor:'rgba(23,30,43,.94)',textStyle:{color:'#fff',fontSize:12.5},
+      padding:[10,14],
+      formatter: p=>{
+        const v=rows[p.dataIndex];
+        return `<b>${v.name}</b><br>当前 PE(TTM) <b>${v.pe}</b><br>
+          5 个财年 PE 区间 <b>${v.lo} ~ ${v.hi}</b><br>
+          当前位置 <b>${v.pe_pct.toFixed(0)}%</b> 分位<br>
+          <span style="color:#9fb0cc">${v.fy} 年度 PE ${v.fy_pe}</span>`;
+      }},
+    xAxis:{type:'value',name:'PE(TTM，倍)',nameLocation:'middle',nameGap:28,
+      nameTextStyle:{color:COL.sub,fontSize:12,fontWeight:600},
+      axisLine:{show:false},axisTick:{show:false},axisLabel:{color:COL.sub,fontSize:11.5},
+      splitLine:{lineStyle:{color:'#f2f4f8'}}},
+    yAxis:{type:'category',data:rows.map(v=>v.name),axisLine:{show:false},axisTick:{show:false},
+      axisLabel:{color:'#2a3446',fontSize:12.5,fontWeight:600}},
+    series:[
+      {name:'5年 PE 区间',type:'custom',renderItem:(params,api)=>{
+        const y=api.value(1), lo=api.value(2), hi=api.value(3);
+        const yc=api.coord([0,y])[1];
+        const x0=api.coord([lo,y])[0], x1=api.coord([hi,y])[0];
+        return {type:'group',children:[
+          {type:'rect',shape:{x:x0,y:yc-5,width:Math.max(1,x1-x0),height:10},
+           style:{fill:'#dfe4ee'},silent:true},
+        ]};
+      },data:rows.map((v,i)=>[i,i,v.lo,v.hi]),silent:true,z:1},
+      {name:'当前 PE',type:'scatter',symbolSize:15,
+        data:rows.map((v,i)=>({value:[v.pe,i],
+          itemStyle:{color: v.pe_pct>=80?COL.up:(v.pe_pct<=20?COL.down:COL.warn),
+            borderColor:'#fff',borderWidth:2.5}})),
+        label:{show:true,position:'right',color:'#2a3446',fontSize:11.5,fontWeight:700,
+          formatter:p=>{const v=rows[p.dataIndex];return 'PE '+v.pe+'（'+v.pe_pct.toFixed(0)+'%分位）';}},z:3}
+    ]
+  });
+})();
+
+/* 06 权重与盈亏 */
+(function(){
+  const P=D.positions;
+  C('c4',{
+    grid:{left:74,right:74,top:52,bottom:52},
+    tooltip:{trigger:'axis',axisPointer:{type:'shadow'},borderWidth:0,
+      backgroundColor:'rgba(23,30,43,.94)',textStyle:{color:'#fff',fontSize:12.5},padding:[10,14],
+      formatter: ps=>{
+        const p=P[ps[0].dataIndex];
+        return `<b>${p.name}</b><br>权重 <b>${(p.w*100).toFixed(1)}%</b>（${money(p.mv)}）<br>
+          收益率 <b>${f2(p.ret*100)}</b><br>盈亏 <b>${(p.upl>=0?'+':'-')}${money(Math.abs(p.upl),0)}</b>`;
+      }},
+    legend:{top:6,itemWidth:11,itemHeight:11,itemGap:16,textStyle:{color:COL.sub,fontSize:12.2}},
+    xAxis:{type:'category',data:P.map(p=>p.name),
+      axisLine:{lineStyle:{color:COL.line}},axisTick:{show:false},
+      axisLabel:{color:'#2a3446',fontSize:12.5,fontWeight:600}},
+    yAxis:[
+      {type:'value',name:'权重 %',nameTextStyle:{color:COL.sub,fontSize:11.5},
+       axisLine:{show:false},axisTick:{show:false},axisLabel:{color:COL.sub,fontSize:11.5,formatter:v=>v+'%'},
+       splitLine:{lineStyle:{color:'#f2f4f8'}}},
+      {type:'value',name:'收益率 %',nameTextStyle:{color:COL.sub,fontSize:11.5},
+       axisLine:{show:false},axisTick:{show:false},axisLabel:{color:COL.sub,fontSize:11.5,formatter:v=>v+'%'},
+       splitLine:{show:false}}
+    ],
+    series:[
+      {name:'权重（左轴）',type:'bar',barWidth:'32%',yAxisIndex:0,
+       data:P.map(p=>({value:+(p.w*100).toFixed(1),
+         itemStyle:{color:'#2f5ad4',opacity:.85,borderRadius:[4,4,0,0]}})),
+       label:{show:true,position:'top',color:COL.sub,fontSize:11,fontWeight:700,formatter:p=>p.value+'%'}},
+      {name:'浮盈亏收益率（右轴）',type:'line',yAxisIndex:1,symbol:'circle',symbolSize:10,
+       data:P.map(p=>({value:+(p.ret*100).toFixed(1),
+         itemStyle:{color:ci(p.ret),borderColor:'#fff',borderWidth:2}})),
+       lineStyle:{color:'#b9c2d4',width:2,type:'dashed'},
+       label:{show:true,position:'top',color:'#2a3446',fontSize:11,fontWeight:700,
+         formatter:p=>(p.value>0?'+':'')+p.value+'%'}}
+    ]
+  });
+})();
+
+/* 07 逐只点评 */
+(function(){
+  $('#stockCards').innerHTML = D.details.map(d=>`<div class="stk">
+    <div class="stk-hd">
+      <span class="nm">${d.name}</span><span class="cd">${d.sym}</span>
+      <span class="ind">${d.ind}</span>
+      <span class="px">现价 <b>${d.px}</b> ${d.ccy} · 权重 <b>${(d.w*100).toFixed(1)}%</b> ·
+        <span class="${cls(d.ret)}">浮盈亏 ${f2(d.ret*100)}</span></span>
+      <span class="tag ${d.tagcls}">${d.tag}</span>
+    </div>
+    <div class="stk-bd">
+      ${d.rows.map(r=>`<div class="dim"><div class="lb">${r.lb}</div><div class="tx">${r.tx}</div></div>`).join('')}
+      <div class="callout ${d.callcls}">${d.call}</div>
+    </div></div>`).join('');
+})();
+
+/* 09 优先级 */
+(function(){
+  $('#steps').innerHTML = D.steps.map((s,i)=>`<div class="step c${s.cls}">
+    <div class="no">${i+1}</div>
+    <div><div class="ttl">${s.ttl}</div><div class="tx">${s.tx}</div></div></div>`).join('');
+})();
+</script>
+</body>
+</html>

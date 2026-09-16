@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# privacy guard: 阻止把密钥 / 含用户名的绝对路径提交进公共仓
+set -uo pipefail
+pat='sk-[A-Za-z0-9_-]{20,}|ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z_-]{30,}|xox[baprs]-[A-Za-z0-9-]{10,}|/Users/[A-Za-z0-9._-]+|/home/[A-Za-z0-9._-]+'
+hit=0
+while IFS= read -r f; do
+  [ -f "$f" ] || continue
+  if grep -nEI "$pat" "$f"; then hit=1; fi
+done < <(git diff --cached --name-only --diff-filter=ACM)
+if [ "$hit" -ne 0 ]; then
+  echo "privacy guard: 命中敏感模式，提交已阻止" >&2
+  exit 1
+fi
+exit 0
