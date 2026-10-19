@@ -6,8 +6,7 @@
 
 | 技能 | 说明 |
 |---|---|
-| [`portfolio-checkup`](./skills/portfolio-checkup) | 生成股票/持仓「体检报告」单页 HTML——对一组标的做估值、基本面、资金、技术四维打分，输出保留/观察/减仓判断、相关性矩阵、组合结构分析与加减仓优先级，含 ECharts 图表。当用户说"持仓体检""帮我诊断哪只该砍""XX 该不该减仓""组合风险分析""五只票哪个最弱""持仓体检报告"时使用。也可用于单只标的的四维快速体检。 |
-| [`xhs-content-studio`](./skills/xhs-content-studio) | 小红书内容工作台。把用户发来的素材（图片 / 链接 / 文字）整理成一篇小红书笔记（标题、正文、标签、配图/封面），展示预览并等待用户明确确认后，再调用发布底座自动发布到小红书账号。当用户说"发小红书""帮我发篇笔记""把这些素材做成小红书""根据这个链接写笔记发出去""xiaohongshu / 小红书 / rednote 发布"等指令时使用此技能。 |
+| [`deepseek-search`](./skills/deepseek-search) | DeepSeek 自研搜索引擎的检索与抓取工具（Search / Fetch API），返回带相关性分（rerank_score）与权威分（authority）的结构化结果，支持 site: / lang: / after: / before: / 精确短语等操作符。**仅当用户明确点名调用时才使用**——触发语为"用 ds 搜索""用 ds 搜""用 deepseek 搜索""用 DeepSeek 搜一下""走 deepseek 检索"等同义明确指令。用户只说"搜一下""查一下""帮我找找""最新消息是什么"等未点名本工具时，**不要使用本技能**，改用默认搜索能力或直接回答。Explicit opt-in only: invoke solely when the user names DS/DeepSeek search; never auto-invoke for generic search requests. |
 
 ## 许可证
 

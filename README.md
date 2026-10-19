@@ -6,8 +6,7 @@ Personal, open-source skills for AI coding agents.
 
 | Skill | Description |
 |---|---|
-| [`portfolio-checkup`](./skills/portfolio-checkup) | Stock/portfolio health-check: score each holding on valuation, fundamentals, capital flow and technicals, then render a single-file HTML report with keep/watch/trim calls, a correlation matrix and portfolio-structure diagnosis (ECharts). |
-| [`xhs-content-studio`](./skills/xhs-content-studio) | Xiaohongshu (RedNote) content studio: turn raw materials (images / links / text) into a ready-to-post note (title, body, tags, cover), show a preview, and publish only after explicit user confirmation — via the upstream xiaohongshu-skill backend (installed separately, not bundled here). |
+| [`deepseek-search`](./skills/deepseek-search) | DeepSeek Search & Fetch API wrapper: query DeepSeek's in-house search engine and fetch single pages as clean Markdown, with rerank_score / authority scoring and site: / lang: / after: / before: / exact-phrase operators. Zero-dependency Node CLI that reuses an existing DeepSeek key (cc-switch, WorkBuddy custom models, env or file). Opt-in by design — used only when the user explicitly names DS/DeepSeek search. |
 
 ## License
 
